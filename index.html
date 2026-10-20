@@ -37,15 +37,15 @@ body.dark{--bg:#10131d;--panel:#191e2b;--text:#edf0fa;--muted:#9aa4ba;--line:#2a
   <div class="side-foot"><div class="secure"><div class="secure-ico">✓</div><div><b>اتصال محافظت‌شده</b><small id="userEmail">در حال بررسی حساب...</small></div></div></div>
  </aside>
  <main class="chat">
-  <header class="head"><div class="avatar">👥</div><div class="head-title"><strong>گفتگوی خصوصی دونفره</strong><small id="status">در حال اتصال...</small></div><div class="head-actions"><button class="icon-btn" id="theme" title="تغییر پوسته">☾</button><button class="icon-btn clear" id="logout" title="خروج از حساب">↪</button></div></header>
+  <header class="head"><div class="avatar">👥</div><div class="head-title"><strong>گفتگوی خصوصی دونفره</strong><small id="status">در حال اتصال...</small></div><div class="head-actions"><button class="icon-btn" id="videoCall" title="تماس تصویری">▣</button><button class="icon-btn" id="voiceCall" title="تماس صوتی">☎</button><button class="icon-btn" id="theme" title="تغییر پوسته">☾</button><button class="icon-btn clear" id="logout" title="خروج از حساب">↪</button></div></header>
   <div class="toast" id="toast" role="status"></div>
   <section class="messages" id="messages"><div class="day">پیام‌ها</div><div class="empty" id="empty"><div><div class="empty-icon">✉</div><h2>گفتگوی شما آماده می‌شود</h2><p>پس از اتصال به سرور، پیام‌های دو طرف اینجا نمایش داده می‌شوند.</p></div></div></section>
-  <footer class="composer-wrap"><form class="composer" id="composer"><button class="tool" type="button" id="attach" title="ارسال فایل (در نسخه بعدی)">＋</button><textarea id="messageText" rows="1" maxlength="5000" placeholder="پیامت رو بنویس..." aria-label="متن پیام" disabled></textarea><button class="send" id="send" type="submit" disabled title="ارسال پیام">➤</button></form><div class="hint">پیام‌ها از طریق دیتابیس خصوصی منتقل می‌شوند • حداکثر ۵۰۰۰ نویسه</div></footer>
+  <footer class="composer-wrap"><form class="composer" id="composer"><button class="tool" type="button" id="attach" title="ارسال عکس">＋</button><input id="fileInput" type="file" accept="image/*" hidden><textarea id="messageText" rows="1" maxlength="5000" placeholder="پیامت رو بنویس..." aria-label="متن پیام" disabled></textarea><button class="send" id="send" type="submit" disabled title="ارسال پیام">➤</button></form><div class="hint">پیام‌ها از طریق دیتابیس خصوصی منتقل می‌شوند • حداکثر ۵۰۰۰ نویسه</div></footer>
  </main>
 </div>
 <script>
 /* پیکربندی را در config.js تغییر دهید؛ کلید anon/public برای مرورگر است، هرگز service_role را اینجا نگذارید. */
-const SUPABASE_URL = window.HARIM_SUPABASE_URL || "https://hqgxmcujawwspjroetff.supabase.co";
+const SUPABASE_URL = window.HARIM_SUPABASE_URL || "https://hqgxmcujawwspjroetff.supabase.co/rest/v1/";
 const SUPABASE_ANON_KEY = window.HARIM_SUPABASE_ANON_KEY || "sb_publishable_xhfDKOfoD2bUSQ4ZwYokTQ_l5Lxge3w";
 const $=id=>document.getElementById(id);
 let sb=null, currentUser=null, channel=null, loadedIds=new Set(), messages=[];
@@ -63,12 +63,28 @@ function render(){
   const row=document.createElement('div');row.className='msg '+(mine?'mine':'other');
   const av=document.createElement('div');av.className='mini-avatar';av.textContent=mine?'🙂':'👤';
   const bubble=document.createElement('div');bubble.className='bubble';
-  const body=document.createElement('div');body.textContent=m.body;
+  const body=document.createElement('div');
+   const fileMatch=typeof m.body==='string' ? m.body.match(/^__HARIM_IMAGE__:(.+)$/) : null;
+   if(fileMatch){
+    body.textContent='در حال بارگذاری عکس...';
+    getImageUrl(fileMatch[1]).then(url=>{
+     if(!url)return;
+     body.textContent='';
+     const img=document.createElement('img');img.src=url;img.alt='عکس ارسال‌شده';img.loading='lazy';
+     img.style.cssText='display:block;max-width:min(280px,65vw);max-height:360px;border-radius:12px;object-fit:contain';
+     body.appendChild(img);
+    }).catch(()=>{body.textContent='عکس قابل نمایش نیست';});
+   }else{body.textContent=m.body;}
   const meta=document.createElement('div');meta.className='meta';meta.textContent=formatTime(m.created_at)+(mine?'  ✓':'');
   bubble.append(body,meta);if(mine)row.append(av,bubble);else row.append(bubble,av);box.append(row);
  }
  const last=messages[messages.length-1];$('lastPreview').textContent=last?last.body:'هنوز پیامی ارسال نشده';
  box.scrollTop=box.scrollHeight;
+}
+async function getImageUrl(path){
+ const {data,error}=await sb.storage.from('harim-files').createSignedUrl(path,3600);
+ if(error) throw error;
+ return data.signedUrl;
 }
 async function loadMessages(){
  const {data,error}=await sb.from('messages').select('id,user_id,body,created_at').order('created_at',{ascending:true}).limit(500);
@@ -110,7 +126,76 @@ $('messageText').addEventListener('input',()=>{$('messageText').style.height='au
 $('search').addEventListener('input',render);
 $('theme').addEventListener('click',()=>{document.body.classList.toggle('dark');$('theme').textContent=document.body.classList.contains('dark')?'☀':'☾'});
 $('logout').addEventListener('click',async()=>{if(sb)await sb.auth.signOut()});
-$('attach').addEventListener('click',()=>toast('ارسال فایل در این نسخه هنوز فعال نیست.'));
+$('attach').addEventListener('click',()=>{if(!currentUser){toast('ابتدا وارد حساب شو');return;}$('fileInput').click()});
+$('fileInput').addEventListener('change',async()=>{
+ const file=$('fileInput').files && $('fileInput').files[0]; if(!file)return;
+ if(!file.type.startsWith('image/')){toast('فقط عکس انتخاب کن');return}
+ if(file.size>6*1024*1024){toast('حجم عکس باید کمتر از ۶ مگابایت باشد');$('fileInput').value='';return}
+ $('attach').disabled=true;
+ try{
+  const ext=(file.name.split('.').pop()||'jpg').replace(/[^a-zA-Z0-9]/g,'').slice(0,8)||'jpg';
+  const path=currentUser.id+'/'+Date.now()+'-'+crypto.randomUUID()+'.'+ext;
+  const {error:upErr}=await sb.storage.from('harim-files').upload(path,file,{contentType:file.type,upsert:false});
+  if(upErr)throw upErr;
+  const {data,error}=await sb.from('messages').insert({body:'__HARIM_IMAGE__:'+path,user_id:currentUser.id}).select('id,user_id,body,created_at').single();
+  if(error)throw error;addIncoming(data);toast('عکس ارسال شد');
+ }catch(err){toast('ارسال عکس ناموفق بود: '+(err.message||'خطای اتصال'))}
+ finally{$('attach').disabled=false;$('fileInput').value=''}
+});
+// تماس تصویری/صوتی با WebRTC و پیام‌رسانی سیگنال از طریق Supabase Realtime
+let callChannel=null, pc=null, localStream=null, callInitiator=false;
+function ensureCallUI(){
+ let box=$('callBox'); if(box)return box;
+ box=document.createElement('div');box.id='callBox';box.style.cssText='position:fixed;inset:0;z-index:30;background:#10131dcc;display:none;place-items:center;padding:16px';
+ box.innerHTML='<div style="background:var(--panel);color:var(--text);width:min(620px,100%);padding:18px;border-radius:20px"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><b id="callTitle">تماس</b><button id="endCall" class="icon-btn">✕</button></div><p id="callStatus" style="font-size:12px">در حال آماده‌سازی تماس…</p><div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><video id="remoteVideo" autoplay playsinline style="background:#111;width:min(420px,100%);max-height:50vh;border-radius:14px"></video><video id="localVideo" autoplay muted playsinline style="background:#222;width:140px;max-height:22vh;border-radius:14px"></video></div></div>';
+ document.body.appendChild(box);$('endCall').onclick=()=>endCall(true);return box;
+}
+async function startCall(video){
+ if(!currentUser||!sb){toast('ابتدا وارد حساب شو');return}
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){toast('مرورگر یا اتصال امن از تماس پشتیبانی نمی‌کند');return}
+ try{
+  ensureCallUI().style.display='grid';$('callTitle').textContent=video?'تماس تصویری':'تماس صوتی';$('callStatus').textContent='در انتظار اتصال طرف مقابل…';
+  localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:video?{facingMode:'user'}:false});
+  $('localVideo').srcObject=localStream;$('localVideo').style.display=video?'block':'none';$('remoteVideo').style.display=video?'block':'none';
+  pc=new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]});
+  localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));
+  pc.ontrack=e=>{if(e.streams&&e.streams[0])$('remoteVideo').srcObject=e.streams[0];$('callStatus').textContent='تماس برقرار است'};
+  pc.onicecandidate=e=>{if(e.candidate&&callChannel)callChannel.send({type:'broadcast',event:'signal',payload:{from:currentUser.id,candidate:e.candidate}})};
+  pc.onconnectionstatechange=()=>{if(pc&&['failed','disconnected','closed'].includes(pc.connectionState))$('callStatus').textContent='اتصال قطع شد'};
+  if(callChannel)await sb.removeChannel(callChannel);
+  callChannel=sb.channel('harim-call-room',{config:{broadcast:{self:false}}});
+  callChannel.on('broadcast',{event:'signal'},async({payload})=>{
+   if(!payload||payload.from===currentUser.id||!pc)return;
+   try{
+    if(payload.ready){
+     // هر دو نفر دکمه تماس را می‌زنند؛ فقط شناسه کوچک‌تر offer می‌سازد تا برخورد offer رخ ندهد.
+     if(currentUser.id < payload.from && pc.signalingState==='stable'){
+      const offer=await pc.createOffer();await pc.setLocalDescription(offer);
+      await callChannel.send({type:'broadcast',event:'signal',payload:{from:currentUser.id,offer:pc.localDescription}});
+      $('callStatus').textContent='در حال زنگ زدن به طرف مقابل…';
+     }
+    }else if(payload.offer&&pc.signalingState==='stable'){await pc.setRemoteDescription(payload.offer);const answer=await pc.createAnswer();await pc.setLocalDescription(answer);await callChannel.send({type:'broadcast',event:'signal',payload:{from:currentUser.id,answer:pc.localDescription}});$('callStatus').textContent='در حال اتصال به تماس…'}
+    else if(payload.answer&&pc.signalingState==='have-local-offer'){await pc.setRemoteDescription(payload.answer);$('callStatus').textContent='تماس برقرار شد'}
+    else if(payload.candidate){await pc.addIceCandidate(payload.candidate)}
+    else if(payload.hangup){endCall(false)}
+   }catch(err){$('callStatus').textContent='خطای تماس: '+err.message}
+  });
+  await callChannel.subscribe(async(state)=>{
+   if(state==='SUBSCRIBED'){
+    await callChannel.send({type:'broadcast',event:'signal',payload:{from:currentUser.id,ready:true}});
+    $('callStatus').textContent='منتظر پاسخ طرف مقابل؛ او هم باید دکمه تماس را بزند…';
+   }
+  });
+ }catch(err){toast('تماس شروع نشد: '+(err.message||'دسترسی دوربین/میکروفون را بررسی کن'));endCall(false)}
+}
+async function endCall(notify){
+ try{if(notify&&callChannel&&currentUser)await callChannel.send({type:'broadcast',event:'signal',payload:{from:currentUser.id,hangup:true}})}catch{}
+ if(pc){pc.close();pc=null} if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null}
+ if(callChannel&&sb){sb.removeChannel(callChannel);callChannel=null}
+ callInitiator=false;const box=$('callBox');if(box)box.style.display='none';
+}
+$('videoCall').addEventListener('click',()=>{callInitiator=false;startCall(true)});
+$('voiceCall').addEventListener('click',()=>{callInitiator=false;startCall(false)});
 connect().catch(e=>showLogin('خطای اتصال: '+e.message));
 </script>
 </body></html>
