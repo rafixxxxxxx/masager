@@ -28,6 +28,8 @@ html,body{width:100%;height:100%;height:100dvh;overflow:hidden;overscroll-behavi
 @media(max-width:700px){body{padding:0;background:var(--panel);min-height:0;display:block;height:100dvh;height:var(--harim-vh,100dvh)}.app{height:100dvh;height:var(--harim-vh,100dvh);min-height:0;border-radius:0;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);overflow:hidden}.chat{height:100%;min-height:0}.sidebar{display:block;max-height:none;overflow:auto;flex:none;border:0;border-bottom:1px solid var(--line)}.brand{display:none}.brand .logo{width:32px;height:32px;font-size:17px}.brand p,.search,.side-label,.side-foot{display:none}.person{display:flex;min-height:48px;padding:7px 12px}.sidebar>div[style*="padding:0 14px"]{padding:8px 10px!important}.head{height:54px;flex:0 0 54px;padding:0 9px}.messages{flex:1 1 auto;min-height:0;overflow-y:auto;padding:12px 10px;scroll-padding-bottom:12px}.composer-wrap{flex:0 0 auto;padding:6px 8px max(6px,env(safe-area-inset-bottom))}.composer textarea{font-size:16px;max-height:88px;min-height:38px}.bubble{max-width:86%}.head-actions{gap:3px}.icon-btn{height:32px;width:32px}}
 @media(max-width:700px) and (max-height:500px){.sidebar>div[style*="padding:0 14px"]{padding:4px 8px!important}.person{min-height:38px}.head{height:48px;flex-basis:48px}}
 .sidebar{display:flex;max-height:174px;overflow:auto;border-left:0;border-bottom:1px solid var(--line)}.brand{padding:8px 12px}.brand .logo{width:32px;height:32px;font-size:17px}.brand h1{font-size:15px}.brand p,.search,.side-label,.side-foot{display:none}.person{display:flex;min-height:58px;padding:8px 12px;gap:9px;align-items:center;border-bottom:1px solid var(--line)}.sidebar>div[style*='padding:0 14px']{padding:4px 12px 8px!important}.head{height:58px;padding:0 12px}.messages{padding:14px 10px}.composer-wrap{padding:8px 8px max(10px,env(safe-area-inset-bottom))}.bubble{max-width:86%}.head-actions{gap:3px}.icon-btn{height:34px;width:34px}
+
+
 /* Final mobile layout: contacts drawer, stable chat viewport, no input zoom */
 .contacts-toggle{display:none}
 @media(max-width:700px){
@@ -45,6 +47,24 @@ html,body{width:100%;height:100%;height:100dvh;overflow:hidden;overscroll-behavi
  .composer-wrap{flex:0 0 auto!important;padding:6px 8px max(6px,env(safe-area-inset-bottom))!important}.composer textarea{font-size:16px!important;max-height:88px!important;min-height:38px!important;line-height:1.5}
  input,textarea,select{font-size:16px!important}.bubble{max-width:86%!important}
 }
+
+/* Desktop sidebar fix: full-height contact list; only the conversation list scrolls. */
+@media (min-width:701px){
+ body{padding:14px!important;display:grid!important;place-items:center!important}
+ .app{height:min(900px,calc(100dvh - 28px))!important;min-height:0!important;grid-template-columns:330px minmax(0,1fr)!important;display:grid!important}
+ .sidebar{display:flex!important;position:relative!important;inset:auto!important;width:auto!important;height:100%!important;max-height:none!important;min-height:0!important;overflow:hidden!important;flex-direction:column!important;transform:none!important;box-shadow:none!important;border-left:1px solid var(--line)!important;border-bottom:0!important}
+ .brand{display:flex!important;padding:18px 20px!important;flex:0 0 auto}
+ .search{display:block!important;margin:0 14px 14px!important;flex:0 0 auto}
+ .search input{font-size:13px!important}
+ .side-label{display:block!important;padding:8px 18px!important;flex:0 0 auto}
+ .sidebar>div[style*="padding:0 14px"]{display:block!important;padding:0 14px 12px!important;flex:0 0 auto}
+ .person{min-height:58px!important;margin:3px 8px!important;padding:10px 12px!important;flex:0 0 auto}
+ #recentContacts{display:flex;flex-direction:column;min-height:0;flex:1 1 auto;overflow:hidden}
+ #recentContactsItems{min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:8px;scrollbar-width:thin}
+ .side-foot{display:block!important;flex:0 0 auto;margin-top:auto!important}
+ .chat{height:100%;min-height:0}
+}
+
 </style>
 </head>
 <body>
@@ -242,7 +262,7 @@ async function ensureCallChannel(){
     await pc.setRemoteDescription(p.description);for(const c of pendingCandidates.splice(0))await pc.addIceCandidate(c);const answer=await pc.createAnswer();await pc.setLocalDescription(answer);await callSend({type:'answer',to:p.from,description:pc.localDescription});callStatus('در حال برقراری تماس…');
    }else if(p.type==='answer'&&callRole==='caller'&&pc&&pc.signalingState==='have-local-offer'){
     await pc.setRemoteDescription(p.description);for(const c of pendingCandidates.splice(0))await pc.addIceCandidate(c);callStatus('پاسخ دریافت شد؛ در حال اتصال…');
-   }else if(p.type==='candidate'&&pc){if(pc.remoteDescription)await pc.addIceCandidate(p.candidate);else pendingCandidates.push(p.candidate)}
+   }else if(p.type==='candidate'){if(pc&&pc.remoteDescription){try{await pc.addIceCandidate(p.candidate)}catch(candidateError){console.warn('ICE candidate ignored:',candidateError)}}else pendingCandidates.push(p.candidate)}
    else if(p.type==='hangup'&&callState!=='idle'){callStatus('تماس پایان یافت');await endCall(false)}
   }catch(err){console.error('Harim call signal error:',err);callStatus('خطای تماس: '+(err.message||'اتصال ناموفق'));toast('خطای تماس: '+(err.message||'اتصال ناموفق'));}
  });
@@ -258,7 +278,16 @@ async function prepareMediaAndPeer(){
  if(!localStream){localStream=new MediaStream();mediaNote=mediaNote||'در این دستگاه دوربین یا میکروفون قابل دسترسی نیست'}
  const hasVideo=localStream.getVideoTracks().length>0,hasAudio=localStream.getAudioTracks().length>0;
  $('localVideo').srcObject=localStream;$('localVideo').style.display=hasVideo?'block':'none';$('remoteVideo').style.display=callMode==='video'?'block':'none';
- pc=new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]});
+ pc=new RTCPeerConnection({iceServers:[
+  {urls:'stun:stun.l.google.com:19302'},
+  {urls:'stun:stun1.l.google.com:19302'},
+  // Public OpenRelay relay for networks where direct STUN connectivity fails.
+  // This shared demo relay may be rate-limited; production use should configure a private TURN service.
+  {urls:'turn:openrelay.metered.ca:80',username:'openrelayproject',credential:'openrelayproject'},
+  {urls:'turn:openrelay.metered.ca:80?transport=tcp',username:'openrelayproject',credential:'openrelayproject'},
+  {urls:'turn:openrelay.metered.ca:443?transport=tcp',username:'openrelayproject',credential:'openrelayproject'},
+  {urls:'turns:openrelay.metered.ca:443?transport=tcp',username:'openrelayproject',credential:'openrelayproject'}
+ ],iceCandidatePoolSize:6});
  localStream.getTracks().forEach(track=>pc.addTrack(track,localStream));
  // Even without a local device, keep both media directions open so the other
  // participant can still send audio/video to this device.
@@ -269,7 +298,7 @@ async function prepareMediaAndPeer(){
   if(stream){$('remoteVideo').srcObject=stream;$('remoteVideo').style.display=callMode==='video'?'block':'none';$('remoteVideo').play?.().catch(()=>{});callStatus('رسانهٔ طرف مقابل دریافت شد؛ در حال اتصال…')}
  };
  pc.onicecandidate=e=>{if(e.candidate)callSend({type:'candidate',candidate:e.candidate})};
- pc.onconnectionstatechange=()=>{if(!pc)return;if(pc.connectionState==='connected'){ringtone(false);callState='active';callStatus(hasVideo?'تماس برقرار است':'تماس متصل است؛ دوربین این دستگاه در دسترس نیست')}else if(['failed','disconnected'].includes(pc.connectionState)){callStatus('اتصال ناپایدار یا قطع شد؛ ممکن است سرور TURN لازم باشد')}};
+ pc.onconnectionstatechange=()=>{if(!pc)return;const state=pc.connectionState;if(state==='connected'){ringtone(false);callState='active';callStatus(hasVideo?'تماس تصویری برقرار است':'تماس متصل است؛ رسانهٔ موجود فعال است')}else if(state==='disconnected'){callStatus('ارتباط موقتاً ناپایدار است؛ در حال تلاش برای اتصال مجدد…')}else if(state==='failed'){callStatus('اتصال مستقیم ناموفق بود؛ مسیر TURN در حال بررسی است. اگر ادامه داشت، باید TURN اختصاصی تنظیم شود.')}};
  if(mediaNote&&!hasAudio&&!hasVideo)callStatus('دستگاه رسانه‌ای پیدا نشد؛ تلاش برای اتصال یک‌طرفه ادامه دارد.');
  else if(callMode==='video'&&!hasVideo)callStatus('دوربین این دستگاه در دسترس نیست؛ تماس ادامه می‌یابد و تصویر طرف مقابل نمایش داده می‌شود.');
 }
