@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#151827"><title>حریم | پیام‌رسان خصوصی</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -27,8 +27,24 @@ body.dark{--bg:#17212b;--panel:#212d3b;--text:#eaf3fa;--muted:#91a4b4;--line:#30
 html,body{width:100%;height:100%;height:100dvh;overflow:hidden;overscroll-behavior:none}
 @media(max-width:700px){body{padding:0;background:var(--panel);min-height:0;display:block;height:100dvh;height:var(--harim-vh,100dvh)}.app{height:100dvh;height:var(--harim-vh,100dvh);min-height:0;border-radius:0;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);overflow:hidden}.chat{height:100%;min-height:0}.sidebar{display:block;max-height:none;overflow:auto;flex:none;border:0;border-bottom:1px solid var(--line)}.brand{display:none}.brand .logo{width:32px;height:32px;font-size:17px}.brand p,.search,.side-label,.side-foot{display:none}.person{display:flex;min-height:48px;padding:7px 12px}.sidebar>div[style*="padding:0 14px"]{padding:8px 10px!important}.head{height:54px;flex:0 0 54px;padding:0 9px}.messages{flex:1 1 auto;min-height:0;overflow-y:auto;padding:12px 10px;scroll-padding-bottom:12px}.composer-wrap{flex:0 0 auto;padding:6px 8px max(6px,env(safe-area-inset-bottom))}.composer textarea{font-size:16px;max-height:88px;min-height:38px}.bubble{max-width:86%}.head-actions{gap:3px}.icon-btn{height:32px;width:32px}}
 @media(max-width:700px) and (max-height:500px){.sidebar>div[style*="padding:0 14px"]{padding:4px 8px!important}.person{min-height:38px}.head{height:48px;flex-basis:48px}}
-.sidebar{display:flex;max-height:174px;overflow:auto;border-left:0;border-bottom:1px solid var(--line)}.brand{padding:8px 12px}.brand .logo{width:32px;height:32px;font-size:17px}.brand h1{font-size:15px}.brand p,.search,.side-label,.side-foot{display:none}.person{display:flex;min-height:58px;padding:8px 12px;gap:9px;align-items:center;border-bottom:1px solid var(--line)}.sidebar>div[style*='padding:0 14px']{padding:4px 12px 8px!important}.head{height:58px;padding:0 12px}.messages{padding:14px 10px}.composer-wrap{padding:8px 8px max(10px,env(safe-area-inset-bottom))}.bubble{max-width:86%}.head-actions{gap:3px}.icon-btn{height:34px;width:34px}}
-
+.sidebar{display:flex;max-height:174px;overflow:auto;border-left:0;border-bottom:1px solid var(--line)}.brand{padding:8px 12px}.brand .logo{width:32px;height:32px;font-size:17px}.brand h1{font-size:15px}.brand p,.search,.side-label,.side-foot{display:none}.person{display:flex;min-height:58px;padding:8px 12px;gap:9px;align-items:center;border-bottom:1px solid var(--line)}.sidebar>div[style*='padding:0 14px']{padding:4px 12px 8px!important}.head{height:58px;padding:0 12px}.messages{padding:14px 10px}.composer-wrap{padding:8px 8px max(10px,env(safe-area-inset-bottom))}.bubble{max-width:86%}.head-actions{gap:3px}.icon-btn{height:34px;width:34px}
+/* Final mobile layout: contacts drawer, stable chat viewport, no input zoom */
+.contacts-toggle{display:none}
+@media(max-width:700px){
+ html,body{width:100%;height:100%;height:100dvh;overflow:hidden;touch-action:pan-x pan-y}
+ body{padding:0!important;display:block!important;min-height:0!important;height:var(--harim-vh,100dvh)!important;overflow:hidden!important}
+ .app{width:100%;height:var(--harim-vh,100dvh)!important;min-height:0!important;display:block!important;border:0!important;border-radius:0!important;overflow:hidden!important;position:relative}
+ .chat{width:100%;height:100%!important;min-height:0!important;display:flex!important}
+ .sidebar{display:flex!important;position:fixed!important;z-index:25;top:0;right:0;bottom:0;width:min(88vw,350px);height:var(--harim-vh,100dvh)!important;max-height:none!important;overflow-y:auto!important;flex-direction:column!important;background:var(--panel)!important;border:0!important;border-left:1px solid var(--line)!important;box-shadow:-12px 0 36px #142b3b22;transform:translateX(110%);transition:transform .22s ease;}
+ body.contacts-open .sidebar{transform:translateX(0)}
+ .brand{display:flex!important;padding:14px!important}.brand .logo{width:36px!important;height:36px!important;font-size:18px!important}.brand p{display:block!important}.search{display:block!important;margin:0 12px 10px!important}.search input{font-size:16px!important}.side-label{display:block!important;padding:8px 16px!important}.side-foot{display:block!important;margin-top:auto!important}.sidebar>div[style*="padding:0 14px"]{padding:8px 12px!important;flex-shrink:0}
+ .person{flex:0 0 auto!important;min-height:54px!important;margin:4px 8px!important;padding:9px 12px!important}
+ .head{height:56px!important;flex:0 0 56px!important;padding:0 8px!important;gap:7px!important}.contacts-toggle{display:block!important;flex:0 0 32px;width:32px;height:32px}
+ .head-actions{gap:3px!important}.head-actions .icon-btn{width:32px;height:32px;flex:0 0 32px}
+ .messages{flex:1 1 0!important;height:auto!important;min-height:0!important;overflow-y:auto!important;overscroll-behavior:contain;padding:12px 10px!important;scroll-padding-bottom:14px}
+ .composer-wrap{flex:0 0 auto!important;padding:6px 8px max(6px,env(safe-area-inset-bottom))!important}.composer textarea{font-size:16px!important;max-height:88px!important;min-height:38px!important;line-height:1.5}
+ input,textarea,select{font-size:16px!important}.bubble{max-width:86%!important}
+}
 </style>
 </head>
 <body>
@@ -54,7 +70,7 @@ html,body{width:100%;height:100%;height:100dvh;overflow:hidden;overscroll-behavi
   <div class="side-foot"><div class="secure"><div class="secure-ico">✓</div><div><b>اتصال محافظت‌شده</b><small id="userEmail">در حال بررسی حساب...</small></div></div></div>
  </aside>
  <main class="chat">
-  <header class="head"><div class="avatar">👤</div><div class="head-title"><strong id="chatTitle">گفت‌وگوی خصوصی</strong><small id="status">در حال اتصال...</small></div><div class="head-actions"><button class="icon-btn" id="videoCall" title="تماس تصویری">▣</button><button class="icon-btn" id="voiceCall" title="تماس صوتی">☎</button><button class="icon-btn" id="theme" title="تغییر پوسته">☾</button><button class="icon-btn clear" id="logout" title="خروج از حساب">↪</button></div></header>
+  <header class="head"><button class="icon-btn contacts-toggle" id="contactsToggle" type="button" title="مخاطبان">☰</button><div class="avatar">👤</div><div class="head-title"><strong id="chatTitle">گفت‌وگوی خصوصی</strong><small id="status">در حال اتصال...</small></div><div class="head-actions"><button class="icon-btn" id="videoCall" title="تماس تصویری">▣</button><button class="icon-btn" id="voiceCall" title="تماس صوتی">☎</button><button class="icon-btn" id="theme" title="تغییر پوسته">☾</button><button class="icon-btn clear" id="logout" title="خروج از حساب">↪</button></div></header>
   <div class="toast" id="toast" role="status"></div>
   <section class="messages" id="messages"><div class="day">پیام‌ها</div><div class="empty" id="empty"><div><div class="empty-icon">✉</div><h2>گفتگوی شما آماده می‌شود</h2><p>پس از اتصال به سرور، پیام‌های دو طرف اینجا نمایش داده می‌شوند.</p></div></div></section>
   <footer class="composer-wrap"><form class="composer" id="composer"><button class="tool" type="button" id="attach" title="ارسال عکس">＋</button><input id="fileInput" type="file" accept="image/*" hidden><textarea id="messageText" rows="1" maxlength="5000" placeholder="پیامت رو بنویس..." aria-label="متن پیام" disabled></textarea><button class="send" id="send" type="submit" disabled title="ارسال پیام">➤</button></form><div class="hint">پیام‌ها از طریق دیتابیس خصوصی منتقل می‌شوند • حداکثر ۵۰۰۰ نویسه</div></footer>
@@ -66,6 +82,12 @@ const SUPABASE_URL = window.HARIM_SUPABASE_URL || "https://hqgxmcujawwspjroetff.
 const SUPABASE_ANON_KEY = window.HARIM_SUPABASE_ANON_KEY || "sb_publishable_xhfDKOfoD2bUSQ4ZwYokTQ_l5Lxge3w";
 const $=id=>document.getElementById(id);
 let sb=null, currentUser=null, channel=null, loadedIds=new Set(), messages=[], recipientUser=null;
+let recentContacts=[];
+function contactsKey(){return 'harim_recent_contacts_'+(currentUser?.id||'guest')}
+function saveRecentContact(){if(!currentUser||!recipientUser)return;recentContacts=recentContacts.filter(c=>c.id!==recipientUser.id);recentContacts.unshift({id:recipientUser.id,email:recipientUser.email});recentContacts=recentContacts.slice(0,40);try{localStorage.setItem(contactsKey(),JSON.stringify(recentContacts))}catch{};renderRecentContacts()}
+function renderRecentContacts(){const side=document.querySelector('.sidebar');if(!side)return;let list=document.getElementById('recentContacts');if(!list){list=document.createElement('div');list.id='recentContacts';list.innerHTML='<div class="side-label">گفت‌وگوهای قبلی</div><div id="recentContactsItems"></div>';side.appendChild(list)}const items=list.querySelector('#recentContactsItems');items.replaceChildren();recentContacts.forEach(c=>{const row=document.createElement('button');row.type='button';row.className='person recent-person';row.style.cssText='width:calc(100% - 16px);border:0;text-align:right;font:inherit;cursor:pointer';const av=document.createElement('span');av.className='avatar';av.textContent='👤';const main=document.createElement('span');main.className='person-main';const strong=document.createElement('strong');strong.textContent=c.email;const small=document.createElement('small');small.textContent=recipientUser?.id===c.id?'گفت‌وگوی انتخاب‌شده':'برای باز کردن بزن';main.append(strong,small);row.append(av,main);row.addEventListener('click',()=>openRecentContact(c));items.appendChild(row)})}
+async function openRecentContact(c){try{recipientUser={id:c.id,email:c.email};$('contactName').textContent=c.email;$('chatTitle').textContent=c.email;$('contactStatus').textContent='گفت‌وگوی خصوصی با '+c.email;await loadMessages();if(channel)await sb.removeChannel(channel);channel=sb.channel('harim-private-messages-'+currentUser.id).on('postgres_changes',{event:'*',schema:'public',table:'messages'},payload=>{const m=payload.new||payload.old;if(!recipientUser||!m||!((m.user_id===currentUser.id&&m.recipient_id===recipientUser.id)||(m.user_id===recipientUser.id&&m.recipient_id===currentUser.id)))return;if(payload.eventType==='INSERT')addIncoming(payload.new);else if(payload.eventType==='UPDATE'){messages=messages.map(x=>x.id===payload.new.id?payload.new:x);render()}else if(payload.eventType==='DELETE'){messages=messages.filter(x=>x.id!==payload.old.id);loadedIds.delete(payload.old.id);render()}}).subscribe();if(callChannel)await sb.removeChannel(callChannel);callChannel=null;await ensureCallChannel();document.body.classList.remove('contacts-open');renderRecentContacts()}catch(e){toast('باز کردن گفت‌وگو ناموفق بود: '+(e.message||''))}}
+$('contactsToggle').addEventListener('click',()=>document.body.classList.toggle('contacts-open'));document.addEventListener('keydown',e=>{if(e.key==='Escape')document.body.classList.remove('contacts-open')});
 function toast(t){$('toast').textContent=t;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),3000)}
 function setStatus(t,good=false){$('status').textContent=(good?'● ':'● ')+t;$('status').style.color=good?'#23ad7b':'#d49a3b'}
 function showLogin(err=''){$('login').classList.remove('hidden');$('loginError').textContent=err}
@@ -141,11 +163,11 @@ async function connect(){
  sb.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){currentUser=null;messages=[];if(channel)sb.removeChannel(channel);if(callChannel)sb.removeChannel(callChannel);callChannel=null;showLogin();} });
 }
 async function startSession(user){
- currentUser=user;$('userEmail').textContent=user.email||'حساب مجاز';hideLogin();$('messageText').disabled=false;$('send').disabled=false;setStatus('در حال همگام‌سازی');
+ currentUser=user;try{recentContacts=JSON.parse(localStorage.getItem(contactsKey())||'[]').filter(c=>c&&c.id&&c.email)}catch{recentContacts=[]}renderRecentContacts();$('userEmail').textContent=user.email||'حساب مجاز';hideLogin();$('messageText').disabled=false;$('send').disabled=false;setStatus('در حال همگام‌سازی');
  try{await loadMessages();if(channel)await sb.removeChannel(channel);
  channel=sb.channel('harim-private-messages-'+user.id).on('postgres_changes',{event:'*',schema:'public',table:'messages'},payload=>{const m=payload.new||payload.old;if(!recipientUser||!m||![m.user_id,m.recipient_id].includes(currentUser.id)||![m.user_id,m.recipient_id].includes(recipientUser.id))return;if(payload.eventType==='INSERT')addIncoming(payload.new);else if(payload.eventType==='UPDATE'){messages=messages.map(x=>x.id===payload.new.id?payload.new:x);render()}else if(payload.eventType==='DELETE'){messages=messages.filter(x=>x.id!==payload.old.id);loadedIds.delete(payload.old.id);render()}}).subscribe((state)=>{if(state==='SUBSCRIBED')setStatus('آنلاین و متصل',true);if(state==='CHANNEL_ERROR'||state==='TIMED_OUT')setStatus('اتصال قطع شد');});
-  await ensureCallChannel();
  }catch(e){setStatus('خطا در دریافت پیام‌ها');toast('خطا: '+(e.message||'دریافت پیام‌ها ناموفق بود'))}
+ if(recentContacts.length)await openRecentContact(recentContacts[0]);
 }
 $('loginForm').addEventListener('submit',async e=>{
  e.preventDefault();$('loginError').textContent='';
@@ -160,7 +182,7 @@ $('contactForm').addEventListener('submit',async e=>{
  e.preventDefault(); if(!currentUser||!sb)return; const email=$('contactEmail').value.trim().toLowerCase();
  if(email===String(currentUser.email||'').toLowerCase()){ $('contactStatus').textContent='نمی‌توانی با حساب خودت گفت‌وگو بسازی.'; return; }
  $('contactStatus').textContent='در حال پیدا کردن حساب...';
- try{const {data,error}=await sb.rpc('harim_find_user_by_email',{lookup_email:email});if(error)throw error;const id=Array.isArray(data)?data[0]?.id:data?.id||data;if(!id)throw new Error('حسابی با این ایمیل پیدا نشد.');recipientUser={id,email};$('contactName').textContent=email;$('chatTitle').textContent=email;$('contactStatus').textContent='گفت‌وگوی خصوصی با '+email;await loadMessages();if(channel)await sb.removeChannel(channel);channel=null;channel=sb.channel('harim-private-messages-'+currentUser.id).on('postgres_changes',{event:'*',schema:'public',table:'messages'},payload=>{const m=payload.new||payload.old;if(!recipientUser||!m||!((m.user_id===currentUser.id&&m.recipient_id===recipientUser.id)||(m.user_id===recipientUser.id&&m.recipient_id===currentUser.id)))return;if(payload.eventType==='INSERT')addIncoming(payload.new);else if(payload.eventType==='UPDATE'){messages=messages.map(x=>x.id===payload.new.id?payload.new:x);render()}else if(payload.eventType==='DELETE'){messages=messages.filter(x=>x.id!==payload.old.id);loadedIds.delete(payload.old.id);render()}}).subscribe();if(callChannel)await sb.removeChannel(callChannel);callChannel=null;await ensureCallChannel();}
+ try{const {data,error}=await sb.rpc('harim_find_user_by_email',{lookup_email:email});if(error)throw error;const id=Array.isArray(data)?data[0]?.id:data?.id||data;if(!id)throw new Error('حسابی با این ایمیل پیدا نشد.');recipientUser={id,email};saveRecentContact();document.body.classList.remove('contacts-open');$('contactName').textContent=email;$('chatTitle').textContent=email;$('contactStatus').textContent='گفت‌وگوی خصوصی با '+email;await loadMessages();if(channel)await sb.removeChannel(channel);channel=null;channel=sb.channel('harim-private-messages-'+currentUser.id).on('postgres_changes',{event:'*',schema:'public',table:'messages'},payload=>{const m=payload.new||payload.old;if(!recipientUser||!m||!((m.user_id===currentUser.id&&m.recipient_id===recipientUser.id)||(m.user_id===recipientUser.id&&m.recipient_id===currentUser.id)))return;if(payload.eventType==='INSERT')addIncoming(payload.new);else if(payload.eventType==='UPDATE'){messages=messages.map(x=>x.id===payload.new.id?payload.new:x);render()}else if(payload.eventType==='DELETE'){messages=messages.filter(x=>x.id!==payload.old.id);loadedIds.delete(payload.old.id);render()}}).subscribe();if(callChannel)await sb.removeChannel(callChannel);callChannel=null;await ensureCallChannel();}
  catch(err){$('contactStatus').textContent='خطا: '+(err.message||'جست‌وجوی مخاطب ناموفق بود');}
 });
 $('composer').addEventListener('submit',async e=>{
@@ -227,14 +249,29 @@ async function ensureCallChannel(){
  await new Promise((resolve,reject)=>{let done=false;const timer=setTimeout(()=>{if(!done){done=true;reject(new Error('اتصال کانال تماس زمان‌بر شد'))}},10000);callChannel.subscribe(state=>{if(state==='SUBSCRIBED'&&!done){done=true;clearTimeout(timer);resolve()}else if((state==='CHANNEL_ERROR'||state==='TIMED_OUT')&&!done){done=true;clearTimeout(timer);reject(new Error('کانال تماس وصل نشد؛ Realtime را بررسی کن'))}})});
 }
 async function prepareMediaAndPeer(){
- if(!navigator.mediaDevices?.getUserMedia)throw new Error('برای تماس باید سایت روی HTTPS باز شود و مرورگر از دوربین پشتیبانی کند.');
- try{localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:callMode==='video'?true:false});}catch(err){if(callMode==='video'&&['NotFoundError','OverconstrainedError','DevicesNotFoundError'].includes(err.name)){throw new Error('دوربین پیدا نشد. دوربین را وصل کن یا تماس صوتی را انتخاب کن. ('+err.name+')')}if(err.name==='NotAllowedError')throw new Error('اجازهٔ دوربین و میکروفون را در تنظیمات مرورگر فعال کن.');throw err;}
- $('localVideo').srcObject=localStream;$('localVideo').style.display=callMode==='video'?'block':'none';$('remoteVideo').style.display=callMode==='video'?'block':'none';
+ if(!window.RTCPeerConnection)throw new Error('مرورگر از تماس تصویری پشتیبانی نمی‌کند.');
+ localStream=null;let mediaNote='';
+ if(navigator.mediaDevices?.getUserMedia){
+  const attempts=callMode==='video'?[{audio:true,video:true},{audio:true,video:false},{audio:false,video:true}]:[{audio:true,video:false},{audio:false,video:true}];
+  for(const constraints of attempts){try{localStream=await navigator.mediaDevices.getUserMedia(constraints);break}catch(err){mediaNote=err?.name||'دسترسی ناموفق'}}
+ }
+ if(!localStream){localStream=new MediaStream();mediaNote=mediaNote||'در این دستگاه دوربین یا میکروفون قابل دسترسی نیست'}
+ const hasVideo=localStream.getVideoTracks().length>0,hasAudio=localStream.getAudioTracks().length>0;
+ $('localVideo').srcObject=localStream;$('localVideo').style.display=hasVideo?'block':'none';$('remoteVideo').style.display=callMode==='video'?'block':'none';
  pc=new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]});
  localStream.getTracks().forEach(track=>pc.addTrack(track,localStream));
- pc.ontrack=e=>{if(e.streams?.[0]){$('remoteVideo').srcObject=e.streams[0];$('remoteVideo').play?.().catch(()=>{});callStatus('تماس برقرار است')} };
+ // Even without a local device, keep both media directions open so the other
+ // participant can still send audio/video to this device.
+ if(!hasAudio)pc.addTransceiver('audio',{direction:'sendrecv'});
+ if(!hasVideo)pc.addTransceiver('video',{direction:'sendrecv'});
+ pc.ontrack=e=>{
+  const stream=e.streams&&e.streams[0];
+  if(stream){$('remoteVideo').srcObject=stream;$('remoteVideo').style.display=callMode==='video'?'block':'none';$('remoteVideo').play?.().catch(()=>{});callStatus('رسانهٔ طرف مقابل دریافت شد؛ در حال اتصال…')}
+ };
  pc.onicecandidate=e=>{if(e.candidate)callSend({type:'candidate',candidate:e.candidate})};
- pc.onconnectionstatechange=()=>{if(!pc)return;if(pc.connectionState==='connected'){ringtone(false);callState='active';callStatus('تماس برقرار است')}else if(['failed','disconnected'].includes(pc.connectionState)){callStatus('اتصال ناپایدار یا قطع شد؛ ممکن است سرور TURN لازم باشد')}};
+ pc.onconnectionstatechange=()=>{if(!pc)return;if(pc.connectionState==='connected'){ringtone(false);callState='active';callStatus(hasVideo?'تماس برقرار است':'تماس متصل است؛ دوربین این دستگاه در دسترس نیست')}else if(['failed','disconnected'].includes(pc.connectionState)){callStatus('اتصال ناپایدار یا قطع شد؛ ممکن است سرور TURN لازم باشد')}};
+ if(mediaNote&&!hasAudio&&!hasVideo)callStatus('دستگاه رسانه‌ای پیدا نشد؛ تلاش برای اتصال یک‌طرفه ادامه دارد.');
+ else if(callMode==='video'&&!hasVideo)callStatus('دوربین این دستگاه در دسترس نیست؛ تماس ادامه می‌یابد و تصویر طرف مقابل نمایش داده می‌شود.');
 }
 async function startCall(video){
  if(!currentUser||!sb){toast('ابتدا وارد حساب شو');return}if(!recipientUser){toast('ابتدا ایمیل مخاطب را وارد و گفت‌وگو را شروع کن');return}if(callState!=='idle'){toast('یک تماس در حال انجام است');return}
@@ -244,7 +281,7 @@ async function startCall(video){
 async function acceptIncomingCall(){
  if(callState!=='incoming')return;
  try{ringtone(false);$('incomingActions').style.display='none';callState='connecting';callRole='callee';pendingCandidates=[];callStatus('در حال درخواست اجازهٔ دوربین و میکروفون…');await prepareMediaAndPeer();await callSend({type:'accept',to:recipientUser?.id});callStatus('تماس پذیرفته شد؛ در حال اتصال…')}
- catch(err){toast('دسترسی دوربین/میکروفون ناموفق بود: '+(err.message||'مجوز را بررسی کن'));await endCall(true)}
+ catch(err){console.error('Harim media setup error:',err);toast('آماده‌سازی تماس ناموفق بود: '+(err.message||'اتصال را بررسی کن'));await endCall(true)}
 }
 async function endCall(notify,message=''){
  ringtone(false);if(notify&&callChannel&&currentUser&&callState!=='idle'){try{await callSend({type:callState==='incoming'?'reject':'hangup',to:recipientUser?.id})}catch{}}
@@ -255,6 +292,6 @@ $('videoCall').addEventListener('click',()=>startCall(true));$('voiceCall').addE
 connect().catch(e=>showLogin('خطای اتصال: '+e.message));
 
 // Keep the app fitted to the visible viewport when the mobile keyboard opens.
-(function(){function fit(){const h=(window.visualViewport&&window.visualViewport.height)||window.innerHeight;document.documentElement.style.setProperty('--harim-vh',h+'px')}fit();window.addEventListener('resize',fit);window.visualViewport?.addEventListener('resize',fit);window.visualViewport?.addEventListener('scroll',fit);const ta=document.getElementById('messageText');ta?.addEventListener('focus',()=>setTimeout(()=>{fit();document.getElementById('messages')?.scrollTo({top:document.getElementById('messages').scrollHeight,behavior:'auto'})},250));})();
+(function(){function fit(){const vv=window.visualViewport;const h=vv?Math.max(260,vv.height):window.innerHeight;document.documentElement.style.setProperty('--harim-vh',h+'px')}fit();window.addEventListener('resize',fit,{passive:true});window.visualViewport?.addEventListener('resize',fit,{passive:true});const ta=document.getElementById('messageText');ta?.addEventListener('focus',()=>setTimeout(()=>{fit();const m=document.getElementById('messages');if(m)m.scrollTop=m.scrollHeight},180));ta?.addEventListener('blur',()=>setTimeout(fit,100));})();
 </script>
 </body></html>
